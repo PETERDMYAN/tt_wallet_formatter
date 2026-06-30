@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="tiktok">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TikTok Wallet Formatter · Intl.NumberFormat × every locale</title>
+<style>
+  :root{
+    --radius:18px; --radius-sm:12px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+  }
+  [data-theme="tiktok"]{
+    --bg-grad:radial-gradient(1200px 600px at 70% -10%,rgba(254,44,85,.18),transparent 60%),
+              radial-gradient(1000px 600px at 10% 110%,rgba(37,244,238,.16),transparent 60%),#000;
+    --panel:#131316; --panel-2:#1c1c21; --border:rgba(255,255,255,.08);
+    --text:#fff; --muted:#9a9aa3; --accent:#fe2c55; --accent-2:#25f4ee;
+    --accent-grad:linear-gradient(135deg,#25f4ee 0%,#fe2c55 100%);
+    --field:#1c1c21; --field-border:rgba(255,255,255,.12);
+    --result-bg:linear-gradient(135deg,rgba(37,244,238,.12),rgba(254,44,85,.12));
+    --shadow:0 24px 60px rgba(0,0,0,.6); --chip:rgba(255,255,255,.06); --focus:rgba(37,244,238,.15);
+  }
+  [data-theme="clean"]{
+    --bg-grad:radial-gradient(1000px 500px at 80% -10%,rgba(99,102,241,.12),transparent 60%),#eef1f6;
+    --panel:#fff; --panel-2:#f6f7fb; --border:rgba(15,23,42,.08);
+    --text:#0f172a; --muted:#64748b; --accent:#4f46e5; --accent-2:#0ea5e9;
+    --accent-grad:linear-gradient(135deg,#0ea5e9 0%,#4f46e5 100%);
+    --field:#f6f7fb; --field-border:rgba(15,23,42,.12);
+    --result-bg:linear-gradient(135deg,rgba(14,165,233,.08),rgba(79,70,229,.08));
+    --shadow:0 20px 50px rgba(15,23,42,.12); --chip:rgba(15,23,42,.05); --focus:rgba(14,165,233,.15);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--font);background:var(--bg-grad);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;transition:background .4s,color .4s}
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 20px 90px}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:44px;height:44px;border-radius:13px;background:var(--accent-grad);display:grid;place-items:center;font-weight:800;font-size:22px;color:#fff;box-shadow:0 8px 24px rgba(254,44,85,.35)}
+  .brand h1{font-size:19px;margin:0;letter-spacing:-.2px}
+  .brand p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+  .theme-toggle{display:inline-flex;background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:4px;gap:2px}
+  .theme-toggle button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:7px 14px;border-radius:999px;transition:.2s}
+  .theme-toggle button.active{background:var(--accent-grad);color:#fff;box-shadow:0 4px 14px rgba(254,44,85,.3)}
+
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .input-row{padding:24px 26px;display:grid;grid-template-columns:1.3fr 1fr auto;gap:16px;align-items:end;background:var(--result-bg);border-bottom:1px solid var(--border)}
+  @media(max-width:680px){.input-row{grid-template-columns:1fr 1fr}}
+  .fld .cap{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:7px;letter-spacing:.3px;text-transform:uppercase}
+  input,select{width:100%;font:inherit;font-size:15px;color:var(--text);background:var(--field);border:1.5px solid var(--field-border);border-radius:var(--radius-sm);padding:13px 14px;appearance:none;-webkit-appearance:none;transition:border-color .15s,box-shadow .15s}
+  select{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239a9aa3' stroke-width='3' stroke-linecap='round'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;cursor:pointer}
+  input:focus,select:focus{outline:none;border-color:var(--accent-2);box-shadow:0 0 0 4px var(--focus)}
+  .display-opt{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .display-opt .cap{margin:0 6px 0 0}
+  .seg{display:inline-flex;background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:3px}
+  .seg button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;padding:6px 12px;border-radius:999px}
+  .seg button.active{background:var(--accent-grad);color:#fff}
+
+  .meta{padding:16px 26px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+  .meta .info{font-size:13.5px;color:var(--muted)}
+  .meta .info b{color:var(--text)}
+  .meta .count{font-size:13px;color:var(--muted);font-family:var(--mono)}
+  .search{position:relative;flex:1;min-width:200px;max-width:320px}
+  .search input{padding-left:38px}
+  .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);opacity:.5}
+
+  .grid{padding:18px 26px 8px}
+  .region{margin-bottom:22px}
+  .region h3{font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin:0 0 12px;display:flex;align-items:center;gap:8px}
+  .region h3 .n{background:var(--chip);border-radius:999px;padding:1px 8px;font-size:11px;color:var(--muted)}
+  .cells{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+  .cell{background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;flex-direction:column;gap:5px;cursor:pointer;transition:.12s}
+  .cell:hover{border-color:var(--accent-2);transform:translateY(-1px)}
+  .cell.copied{border-color:var(--accent-2);box-shadow:0 0 0 3px var(--focus)}
+  .cell .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .cell .lc{font-family:var(--mono);font-size:11.5px;color:var(--muted);font-weight:600}
+  .cell .name{font-size:11px;color:var(--muted);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px}
+  .cell .lang{font-size:12px;color:var(--text);font-weight:600;opacity:.85}
+  .cell .val{font-size:18px;font-weight:700;font-family:var(--mono);word-break:break-word;line-height:1.25}
+  .cell.rtl .val{direction:rtl;text-align:right}
+  .empty{padding:40px;text-align:center;color:var(--muted)}
+
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:24px}
+  footer code{font-family:var(--mono);color:var(--text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">$</div>
+      <div><h1>TikTok Wallet Formatter</h1><p>Intl.NumberFormat · ISO 4217 · every locale</p></div>
+    </div>
+    <div class="theme-toggle" id="themeToggle">
+      <button data-set="tiktok" class="active">TikTok Wallet</button>
+      <button data-set="clean">Clean</button>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="input-row">
+      <label class="fld">
+        <div class="cap">Currency (ISO 4217)</div>
+        <select id="currency"></select>
+      </label>
+      <label class="fld">
+        <div class="cap">Amount</div>
+        <input id="amount" type="text" inputmode="decimal" value="1234.56" placeholder="e.g. 1234.5" />
+      </label>
+      <div class="display-opt">
+        <span class="cap">Display</span>
+        <div class="seg" id="display">
+          <button data-v="symbol">symbol</button>
+          <button data-v="narrowSymbol">narrow</button>
+          <button data-v="code" class="active">code</button>
+          <button data-v="name">name</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="meta">
+      <div class="info" id="info">—</div>
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="search" type="text" placeholder="Filter locale or country…" />
+      </div>
+      <div class="count" id="count"></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <footer>Native <code>Intl.NumberFormat</code> · <span id="total"></span> CLDR locales · click any cell to copy</footer>
+</div>
+
+<script>
+/* ---------------- ISO 4217 currencies ---------------- */
+const CURRENCIES = {
+  AED:"UAE Dirham",AFN:"Afghani",ALL:"Lek",AMD:"Armenian Dram",ANG:"Neth. Antillean Guilder",AOA:"Kwanza",ARS:"Argentine Peso",AUD:"Australian Dollar",AWG:"Aruban Florin",AZN:"Azerbaijan Manat",
+  BAM:"Convertible Mark",BBD:"Barbados Dollar",BDT:"Taka",BGN:"Bulgarian Lev",BHD:"Bahraini Dinar",BIF:"Burundi Franc",BMD:"Bermudian Dollar",BND:"Brunei Dollar",BOB:"Boliviano",BRL:"Brazilian Real",
+  BSD:"Bahamian Dollar",BTN:"Ngultrum",BWP:"Pula",BYN:"Belarusian Ruble",BZD:"Belize Dollar",CAD:"Canadian Dollar",CDF:"Congolese Franc",CHF:"Swiss Franc",CLP:"Chilean Peso",CNY:"Yuan Renminbi",
+  COP:"Colombian Peso",CRC:"Costa Rican Colon",CUP:"Cuban Peso",CVE:"Cabo Verde Escudo",CZK:"Czech Koruna",DJF:"Djibouti Franc",DKK:"Danish Krone",DOP:"Dominican Peso",DZD:"Algerian Dinar",EGP:"Egyptian Pound",
+  ERN:"Nakfa",ETB:"Ethiopian Birr",EUR:"Euro",FJD:"Fiji Dollar",FKP:"Falkland Islands Pound",GBP:"Pound Sterling",GEL:"Lari",GHS:"Ghana Cedi",GIP:"Gibraltar Pound",GMD:"Dalasi",
+  GNF:"Guinean Franc",GTQ:"Quetzal",GYD:"Guyana Dollar",HKD:"Hong Kong Dollar",HNL:"Lempira",HRK:"Kuna",HTG:"Gourde",HUF:"Forint",IDR:"Rupiah",ILS:"New Israeli Sheqel",
+  INR:"Indian Rupee",IQD:"Iraqi Dinar",IRR:"Iranian Rial",ISK:"Iceland Krona",JMD:"Jamaican Dollar",JOD:"Jordanian Dinar",JPY:"Yen",KES:"Kenyan Shilling",KGS:"Som",KHR:"Riel",
+  KMF:"Comorian Franc",KPW:"North Korean Won",KRW:"Won",KWD:"Kuwaiti Dinar",KYD:"Cayman Islands Dollar",KZT:"Tenge",LAK:"Lao Kip",LBP:"Lebanese Pound",LKR:"Sri Lanka Rupee",LRD:"Liberian Dollar",
+  LSL:"Loti",LYD:"Libyan Dinar",MAD:"Moroccan Dirham",MDL:"Moldovan Leu",MGA:"Malagasy Ariary",MKD:"Denar",MMK:"Kyat",MNT:"Tugrik",MOP:"Pataca",MRU:"Ouguiya",
+  MUR:"Mauritius Rupee",MVR:"Rufiyaa",MWK:"Malawi Kwacha",MXN:"Mexican Peso",MYR:"Malaysian Ringgit",MZN:"Mozambique Metical",NAD:"Namibia Dollar",NGN:"Naira",NIO:"Cordoba Oro",NOK:"Norwegian Krone",
+  NPR:"Nepalese Rupee",NZD:"New Zealand Dollar",OMR:"Rial Omani",PAB:"Balboa",PEN:"Sol",PGK:"Kina",PHP:"Philippine Peso",PKR:"Pakistan Rupee",PLN:"Zloty",PYG:"Guarani",
+  QAR:"Qatari Rial",RON:"Romanian Leu",RSD:"Serbian Dinar",RUB:"Russian Ruble",RWF:"Rwanda Franc",SAR:"Saudi Riyal",SBD:"Solomon Islands Dollar",SCR:"Seychelles Rupee",SDG:"Sudanese Pound",SEK:"Swedish Krona",
+  SGD:"Singapore Dollar",SHP:"Saint Helena Pound",SLE:"Leone",SOS:"Somali Shilling",SRD:"Surinam Dollar",SSP:"South Sudanese Pound",STN:"Dobra",SVC:"El Salvador Colon",SYP:"Syrian Pound",SZL:"Lilangeni",
+  THB:"Baht",TJS:"Somoni",TMT:"Turkmenistan Manat",TND:"Tunisian Dinar",TOP:"Pa’anga",TRY:"Turkish Lira",TTD:"Trinidad & Tobago Dollar",TWD:"New Taiwan Dollar",TZS:"Tanzanian Shilling",UAH:"Hryvnia",
+  UGX:"Uganda Shilling",USD:"US Dollar",UYU:"Peso Uruguayo",UZS:"Uzbekistan Sum",VES:"Bolívar Soberano",VND:"Dong",VUV:"Vatu",WST:"Tala",XAF:"CFA Franc BEAC",XCD:"East Caribbean Dollar",
+  XOF:"CFA Franc BCEAO",XPF:"CFP Franc",YER:"Yemeni Rial",ZAR:"Rand",ZMW:"Zambian Kwacha",ZWG:"Zimbabwe Gold"
+};
+
+/* ---------------- Every CLDR locale, grouped by region ----------------
+   Covers the full modern-coverage locale set Intl ships with (V8/ICU).   */
+const LOCALE_GROUPS = {
+  "Africa":["af","af-NA","am","ar-DZ","ar-EG","ar-LY","ar-MA","ar-SD","ar-SS","ar-TN","ber","bm","dyo","ee","ff","ff-Latn","ha","ha-GH","ha-NE","ig","kab","khq","ki","kln","ksf","lg","ln","lu","luo","mg","mfe","nd","nus","nyn","om","om-KE","rn","rw","saq","sbp","seh","sg","sn","so","so-DJ","so-ET","so-KE","sw","sw-CD","sw-KE","sw-UG","teo","teo-KE","ti","ti-ER","twq","vai","vai-Latn","wo","xh","yav","yo","yo-BJ","zgh","zu"],
+  "Americas":["arn","ay","chr","en-CA","en-US","es-419","es-AR","es-BO","es-BR","es-BZ","es-CL","es-CO","es-CR","es-CU","es-DO","es-EC","es-GT","es-HN","es-MX","es-NI","es-PA","es-PE","es-PR","es-PY","es-SV","es-US","es-UY","es-VE","fr-CA","gn","ht","kgp","lkt","moh","nv","pt-BR","qu","qu-BO","qu-EC","yrl"],
+  "Asia":["en-HK","en-IN","en-MY","en-PH","en-PK","en-SG","as","bn","bn-IN","bo","bo-IN","brx","ccp","dz","gu","hi","hi-Latn","hy","id","jv","ka","kk","km","kn","ko","ko-KP","ks","ks-Deva","ku","ky","lo","mai","ml","mn","mni","mr","ms","ms-BN","ms-ID","ms-SG","my","ne","ne-IN","or","pa","pa-Arab","ps","ps-PK","sa","sat","sd","sd-Deva","si","su","ta","ta-LK","ta-MY","ta-SG","te","tg","th","tk","tt","ug","ur","ur-IN","uz","uz-Arab","uz-Cyrl","vi","yue","yue-Hans","zh","zh-Hans","zh-Hans-HK","zh-Hans-MO","zh-Hans-SG","zh-Hant","zh-Hant-HK","zh-Hant-MO","ja"],
+  "Europe":["be","be-tarask","bg","br","bs","bs-Cyrl","ca","ca-AD","ca-FR","ca-IT","cs","cv","cy","da","da-GL","de","de-AT","de-BE","de-CH","de-IT","de-LI","de-LU","dsb","el","el-CY","en-GB","en-IE","en-MT","es-ES","et","eu","fi","fo","fo-DK","fr","fr-BE","fr-CH","fr-LU","fur","fy","ga","gd","gl","gsw","gv","hr","hr-BA","hsb","hu","is","it","it-CH","it-SM","it-VA","kw","lb","lt","lv","mk","mt","nb","nds","nl","nl-BE","nn","oc","pl","pt","pt-PT","rm","ro","ro-MD","ru","ru-BY","ru-MD","ru-UA","sc","se","se-FI","se-SE","sk","sl","smn","sq","sq-MK","sq-XK","sr","sr-Latn","sv","sv-FI","tr-CY","uk","vec","wae"],
+  "Middle East":["ar","ar-AE","ar-BH","ar-IL","ar-IQ","ar-JO","ar-KW","ar-LB","ar-OM","ar-PS","ar-QA","ar-SA","ar-SY","ar-YE","ckb","ckb-IR","fa","fa-AF","he","syr","tr"],
+  "Oceania":["en-AU","en-NZ","fj","haw","mi","to"],
+  "Other / generic":["en","en-001","en-150","eo","fr-FR","de-DE","es","it-IT","pt-BR","ru-RU","zh-CN","zh-TW","ja-JP","ko-KR","ace","ast","mg-MG","ia","jbo","tlh"]
+};
+
+/* map each locale to its country (region) for display */
+const dnLang = new Intl.DisplayNames(["en"],{type:"language"});
+const dnRegion = new Intl.DisplayNames(["en"],{type:"region"});
+function flagEmoji(region){
+  if(!/^[A-Z]{2}$/.test(region)) return "🌐";
+  return String.fromCodePoint(...[...region].map(c=>0x1F1E6+c.charCodeAt(0)-65));
+}
+function localeLanguage(lc){
+  try{
+    const L=new Intl.Locale(lc);
+    const tag=L.script?`${L.language}-${L.script}`:L.language;
+    return dnLang.of(tag)||dnLang.of(L.language)||L.language;
+  }catch{ return lc; }
+}
+function localeCountry(lc){
+  let region;
+  try{ region = new Intl.Locale(lc).maximize().region; }catch{}
+  if(!region || !/^[A-Z]{2}$/.test(region)){
+    // world-wide / generic locales (e.g. en-001) — show language instead
+    let lang=lc; try{ const n=dnLang.of(lc); if(n) lang=n; }catch{}
+    return { flag:"🌐", name:lang };
+  }
+  let name=region; try{ name=dnRegion.of(region)||region; }catch{}
+  return { flag:flagEmoji(region), name };
+}
+const RTL = /^(ar|he|fa|ur|ckb|ps|syr|ku|sd|ug|yi|dv)(-|$)/;
+
+const $ = id => document.getElementById(id);
+let DISPLAY = "code";
+
+/* populate currency dropdown */
+(function(){
+  const cur = $("currency");
+  for(const code of Object.keys(CURRENCIES)){
+    const o=document.createElement("option");
+    o.value=code; o.textContent=`${code} — ${CURRENCIES[code]}`;
+    cur.appendChild(o);
+  }
+  cur.value="VND";
+  let total=0; for(const g in LOCALE_GROUPS) total+=LOCALE_GROUPS[g].length;
+  $("total").textContent=total;
+})();
+
+/* theme toggle */
+$("themeToggle").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  document.documentElement.setAttribute("data-theme",b.dataset.set);
+  [...$("themeToggle").children].forEach(c=>c.classList.toggle("active",c===b));
+});
+/* display segmented control */
+$("display").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  DISPLAY=b.dataset.v;
+  [...$("display").children].forEach(c=>c.classList.toggle("active",c===b));
+  render();
+});
+
+function opts(){
+  const o={style:"currency",currency:$("currency").value};
+  if(DISPLAY!=="symbol") o.currencyDisplay=DISPLAY;
+  return o;
+}
+function parseAmount(){
+  const raw=$("amount").value.trim().replace(/,/g,"");
+  if(raw==="") return NaN;
+  const n=Number(raw);
+  return Number.isNaN(n)?NaN:n;
+}
+
+function render(){
+  const grid=$("grid"); grid.innerHTML="";
+  const code=$("currency").value;
+  const num=parseAmount();
+  const o=opts();
+  const filter=$("search").value.trim().toLowerCase();
+
+  if(Number.isNaN(num)){
+    $("info").innerHTML=`<b>${code}</b> · ${CURRENCIES[code]}`;
+    grid.innerHTML=`<div class="empty">Enter a valid amount to format.</div>`;
+    $("count").textContent="";
+    return;
+  }
+  $("info").innerHTML=`Formatting <b>${num.toLocaleString("en-US",{maximumFractionDigits:20})}</b> as <b>${code}</b> · ${CURRENCIES[code]}`;
+
+  let shown=0;
+  for(const region in LOCALE_GROUPS){
+    const cells=[];
+    for(const lc of LOCALE_GROUPS[region]){
+      const {flag,name}=localeCountry(lc);
+      const lang=localeLanguage(lc);
+      if(filter && !(lc.toLowerCase().includes(filter)||name.toLowerCase().includes(filter)||lang.toLowerCase().includes(filter))) continue;
+      let val;
+      try{ val=new Intl.NumberFormat(lc,o).format(num); }
+      catch{ val="—"; }
+      const rtl=RTL.test(lc)?" rtl":"";
+      cells.push(
+        `<div class="cell${rtl}" data-lc="${lc}" data-val="${val.replace(/"/g,'&quot;')}">`+
+          `<div class="top"><span class="lc">${lc}</span><span class="name">${flag} ${name}</span></div>`+
+          `<div class="lang">${lang}</div>`+
+          `<div class="val">${val.replace(/</g,"&lt;")}</div>`+
+        `</div>`
+      );
+    }
+    if(cells.length){
+      shown+=cells.length;
+      const sec=document.createElement("div");
+      sec.className="region";
+      sec.innerHTML=`<h3>${region}<span class="n">${cells.length}</span></h3><div class="cells">${cells.join("")}</div>`;
+      grid.appendChild(sec);
+    }
+  }
+  if(shown===0) grid.innerHTML=`<div class="empty">No locales match “${filter}”.</div>`;
+  $("count").textContent=`${shown} locale${shown===1?"":"s"}`;
+}
+
+/* click a cell to copy its formatted value */
+$("grid").addEventListener("click",e=>{
+  const cell=e.target.closest(".cell"); if(!cell)return;
+  navigator.clipboard.writeText(cell.dataset.val).then(()=>{
+    cell.classList.add("copied");
+    setTimeout(()=>cell.classList.remove("copied"),700);
+  });
+});
+
+["currency","amount"].forEach(id=>$(id).addEventListener("input",render));
+$("search").addEventListener("input",render);
+render();
+</script>
+</body>
+</html>
