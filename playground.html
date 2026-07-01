@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="tiktok">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wallet Locale Resolver · TikTok Wallet spec playground</title>
+<style>
+  :root{ --radius:18px; --radius-sm:12px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,"Cascadia Code",Menlo,Consolas,monospace; }
+  [data-theme="tiktok"]{
+    --bg-grad:radial-gradient(1200px 600px at 70% -10%,rgba(254,44,85,.18),transparent 60%),
+              radial-gradient(1000px 600px at 10% 110%,rgba(37,244,238,.16),transparent 60%),#000;
+    --panel:#131316; --panel-2:#1c1c21; --border:rgba(255,255,255,.08);
+    --text:#fff; --muted:#9a9aa3; --accent:#fe2c55; --accent-2:#25f4ee;
+    --accent-grad:linear-gradient(135deg,#25f4ee 0%,#fe2c55 100%);
+    --field:#1c1c21; --field-border:rgba(255,255,255,.12);
+    --result-bg:linear-gradient(135deg,rgba(37,244,238,.12),rgba(254,44,85,.12));
+    --shadow:0 24px 60px rgba(0,0,0,.6); --chip:rgba(255,255,255,.06); --focus:rgba(37,244,238,.15);
+    --ok:#25f4ee; --warn:#ffcc4d; --bad:#fe2c55; }
+  [data-theme="clean"]{
+    --bg-grad:radial-gradient(1000px 500px at 80% -10%,rgba(99,102,241,.12),transparent 60%),#eef1f6;
+    --panel:#fff; --panel-2:#f6f7fb; --border:rgba(15,23,42,.08);
+    --text:#0f172a; --muted:#64748b; --accent:#4f46e5; --accent-2:#0ea5e9;
+    --accent-grad:linear-gradient(135deg,#0ea5e9 0%,#4f46e5 100%);
+    --field:#f6f7fb; --field-border:rgba(15,23,42,.12);
+    --result-bg:linear-gradient(135deg,rgba(14,165,233,.08),rgba(79,70,229,.08));
+    --shadow:0 20px 50px rgba(15,23,42,.12); --chip:rgba(15,23,42,.05); --focus:rgba(14,165,233,.15);
+    --ok:#0ea5e9; --warn:#b45309; --bad:#dc2626; }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:var(--font);background:var(--bg-grad);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:28px 20px 90px}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;gap:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:44px;height:44px;border-radius:13px;background:var(--accent-grad);display:grid;place-items:center;font-weight:800;font-size:22px;color:#fff;box-shadow:0 8px 24px rgba(254,44,85,.35)}
+  .brand h1{font-size:19px;margin:0;letter-spacing:-.2px}
+  .brand p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+  .nav{display:flex;gap:8px;align-items:center}
+  .nav a{font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:999px;border:1px solid var(--border)}
+  .nav a.active{background:var(--accent-grad);color:#fff;border-color:transparent}
+  .theme-toggle{display:inline-flex;background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:4px;gap:2px}
+  .theme-toggle button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:7px 12px;border-radius:999px}
+  .theme-toggle button.active{background:var(--accent-grad);color:#fff}
+
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .inputs{padding:22px 24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;background:var(--result-bg);border-bottom:1px solid var(--border)}
+  @media(max-width:720px){.inputs{grid-template-columns:1fr 1fr}}
+  .fld .cap{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;letter-spacing:.3px;text-transform:uppercase}
+  .fld .hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4}
+  input{width:100%;font:inherit;font-size:15px;color:var(--text);background:var(--field);border:1.5px solid var(--field-border);border-radius:var(--radius-sm);padding:12px 13px}
+  input:focus{outline:none;border-color:var(--accent-2);box-shadow:0 0 0 4px var(--focus)}
+  .row-toggle{grid-column:1/-1;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+  .row-toggle input{width:auto}
+
+  .balance{padding:26px 24px 22px;border-bottom:1px solid var(--border)}
+  .balance .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1.4px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .balance .dot{width:7px;height:7px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 12px var(--accent-2)}
+  .balance .amount{font-size:44px;font-weight:800;letter-spacing:-1px;line-height:1.05;word-break:break-word}
+  .balance .amount.rtl{direction:rtl;text-align:left}
+  .balance .verdict{margin-top:12px;font-size:13.5px}
+  .badge{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--border)}
+  .badge.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,transparent)}
+  .badge.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+  .badge.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+
+  .body{padding:20px 24px 24px}
+  .sect{font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin:18px 0 10px}
+  .sect:first-child{margin-top:0}
+  .kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+  .kv .item{background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px}
+  .kv .k{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .kv .v{font-size:15px;font-weight:700;margin-top:3px;font-family:var(--mono);word-break:break-word}
+
+  .chain{display:flex;flex-direction:column;gap:8px}
+  .step{display:flex;align-items:center;gap:12px;background:var(--panel-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px}
+  .step .n{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:12px;font-weight:800;background:var(--chip);flex:none}
+  .step .tag{font-family:var(--mono);font-size:14px;font-weight:700}
+  .step .desc{font-size:12px;color:var(--muted);margin-left:auto;text-align:right}
+  .step.win{border-color:color-mix(in srgb,var(--accent-2) 45%,transparent);box-shadow:0 0 0 3px var(--focus)}
+  .step.win .n{background:var(--accent-grad);color:#fff}
+  .step.drop{opacity:.5}
+  .step.drop .tag{text-decoration:line-through}
+
+  .code{background:#0c0c0e;border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;font-family:var(--mono);font-size:12.5px;color:#e6e6e6;overflow-x:auto;line-height:1.65;white-space:pre}
+  [data-theme="clean"] .code{background:#0f172a}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:22px}
+  footer a{color:var(--accent-2)}
+  .presets{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+  .presets button{font:inherit;font-size:12px;font-weight:600;color:var(--muted);background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:6px 11px;cursor:pointer}
+  .presets button:hover{color:var(--text);border-color:var(--accent-2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">$</div>
+      <div><h1>Wallet Locale Resolver</h1><p>Live playground for the money-formatting spec</p></div>
+    </div>
+    <div class="nav">
+      <a href="index.html">Every-locale view</a>
+      <a href="playground.html" class="active">Resolver</a>
+      <a href="SPEC.md">Spec ↗</a>
+      <div class="theme-toggle" id="themeToggle">
+        <button data-set="tiktok" class="active">TikTok</button>
+        <button data-set="clean">Clean</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="inputs">
+      <label class="fld">
+        <div class="cap">Country / region</div>
+        <input id="region" list="regions" value="SG" autocomplete="off" />
+        <datalist id="regions"></datalist>
+        <div class="hint">TikTok country setting. Try an unknown one like <code>ZZ</code>.</div>
+      </label>
+      <label class="fld">
+        <div class="cap">App language</div>
+        <input id="language" list="languages" value="es" autocomplete="off" />
+        <datalist id="languages"></datalist>
+        <div class="hint">Try <code>xyz</code> (unsupported) or <code>zh_CN</code> (malformed).</div>
+      </label>
+      <label class="fld">
+        <div class="cap">Wallet currency (ISO 4217)</div>
+        <input id="currency" list="currencies" value="SGD" autocomplete="off" />
+        <datalist id="currencies"></datalist>
+        <div class="hint">From the <b>ledger</b>, not the country.</div>
+      </label>
+      <label class="fld">
+        <div class="cap">Amount (minor units)</div>
+        <input id="amount" inputmode="numeric" value="12345678900" />
+        <div class="hint">Integer cents. <span id="minorHint"></span></div>
+      </label>
+      <label class="fld" style="grid-column:span 2">
+        <div class="cap">Quick edge cases</div>
+        <div class="presets" id="presets"></div>
+      </label>
+      <label class="row-toggle"><input id="forceLatn" type="checkbox" /> Force Western digits (<code>numberingSystem:"latn"</code>)</label>
+    </div>
+
+    <div class="balance">
+      <div class="label"><span class="dot"></span> Formatted balance</div>
+      <div class="amount" id="out">—</div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+
+    <div class="body">
+      <div class="sect">Normalized inputs</div>
+      <div class="kv" id="norm"></div>
+
+      <div class="sect">Fallback chain — first well-formed candidate with data wins</div>
+      <div class="chain" id="chain"></div>
+
+      <div class="sect">Resolved</div>
+      <div class="kv" id="resolved"></div>
+
+      <div class="sect">Equivalent code</div>
+      <div class="code" id="code"></div>
+    </div>
+  </div>
+
+  <footer>Implements <a href="SPEC.md">SPEC.md</a> §6 exactly · native <code>Intl.NumberFormat</code>, no libraries</footer>
+</div>
+
+<script>
+/* ---------- representative lists (spec §4 / §5) ---------- */
+const REGIONS = ["US","CA","MX","BR","AR","CL","CO","PE","GB","IE","FR","DE","ES","IT","PT","NL","BE","CH","AT","SE","NO","DK","FI","PL","CZ","HU","RO","GR","UA","AE","SA","QA","KW","BH","OM","EG","JO","LB","IQ","MA","DZ","TN","IL","TR","NG","KE","GH","ZA","PK","BD","LK","NP","KZ","UZ","SG","MY","ID","TH","VN","PH","KH","MM","LA","BN","JP","KR","TW","HK","MO","AU","NZ","IN"];
+const LANGUAGES = ["en","es","fr","de","it","nl","sv","da","nb","fi","tr","id","ms","fil","pt","ru","uk","pl","cs","sk","hu","ro","bg","el","hr","sr","hi","bn","gu","pa","ta","te","kn","ml","ur","fa","he","ar","th","vi","km","my","ja","ko","mr","zh-Hant","zh-Hans"];
+
+const $ = id => document.getElementById(id);
+const dnRegion = new Intl.DisplayNames(["en"],{type:"region"});
+const dnLang = new Intl.DisplayNames(["en"],{type:"language"});
+let dnCur; try{ dnCur = new Intl.DisplayNames(["en"],{type:"currency"}); }catch{}
+
+/* populate datalists */
+(function(){
+  const rl=$("regions"); REGIONS.forEach(r=>{const o=document.createElement("option");let n="";try{n=dnRegion.of(r);}catch{} o.value=r;o.label=n;rl.appendChild(o);});
+  const ll=$("languages"); LANGUAGES.forEach(l=>{const o=document.createElement("option");let n="";try{n=dnLang.of(l);}catch{} o.value=l;o.label=n;ll.appendChild(o);});
+  const cl=$("currencies");
+  let codes; try{ codes=Intl.supportedValuesOf("currency"); }catch{ codes=["USD","EUR","GBP","JPY","SGD","VND","EGP","INR","KWD","IRR","THB","BRL","CNY","AUD"]; }
+  codes.forEach(c=>{const o=document.createElement("option");let n="";try{n=dnCur?dnCur.of(c):"";}catch{} o.value=c;o.label=n;cl.appendChild(o);});
+})();
+
+/* presets: [label, region, language, currency, amount] */
+const PRESETS = [
+  ["Spanish in Singapore","SG","es","SGD","12345678900"],
+  ["Unsupported lang · Egypt","EG","xyz","EGP","12345678900"],
+  ["Unsupported lang · Vietnam","VN","xyz","VND","1234568"],
+  ["Unknown region & lang","ZZ","xyz","USD","12345678900"],
+  ["Malformed zh_CN in SG","SG","zh_CN","SGD","12345678900"],
+  ["Arabic · Kuwait (3-dec)","KW","ar","KWD","1234567890"],
+  ["Japanese · Yen (0-dec)","JP","ja","JPY","12345678900"],
+  ["Missing lang & region","","","USD","12345678900"],
+];
+(function(){ const p=$("presets"); PRESETS.forEach(([label,r,l,c,a])=>{const b=document.createElement("button");b.textContent=label;b.onclick=()=>{$("region").value=r;$("language").value=l;$("currency").value=c;$("amount").value=a;render();};p.appendChild(b);}); })();
+
+/* ---------- the spec implementation (§6.5) ---------- */
+function normalizeLanguage(raw){
+  const parts=(raw||"").trim().replace(/_/g,"-").split("-").filter(Boolean);
+  if(!parts.length) return "";
+  const lang=parts[0].toLowerCase();
+  const script=parts.find(p=>/^[A-Za-z]{4}$/.test(p));
+  return script ? `${lang}-${script[0].toUpperCase()}${script.slice(1).toLowerCase()}` : lang;
+}
+function wellFormed(tag){ try{ new Intl.Locale(tag); return true; }catch{ return false; } }
+function buildChain(language,region){
+  const lang=normalizeLanguage(language);
+  const reg=(region||"").trim().toUpperCase();
+  const items=[];
+  if(lang&&reg) items.push({tag:`${lang}-${reg}`,role:"language-REGION (exact)"});
+  if(lang)      items.push({tag:lang,role:"language (user conventions)"});
+  if(reg){ try{ const m=new Intl.Locale("und-"+reg).maximize(); items.push({tag:`${m.language}-${reg}`,role:"country default"}); }catch{} }
+  items.push({tag:"en",role:"anchor"});
+  // mark malformed
+  return {lang,reg,items:items.map(it=>({...it,ok:wellFormed(it.tag)}))};
+}
+function minorToDecimal(minor,e){
+  const neg=minor<0n; let s=(neg?-minor:minor).toString();
+  if(e===0) return (neg?"-":"")+s;
+  while(s.length<=e) s="0"+s;
+  return (neg?"-":"")+s.slice(0,-e)+"."+s.slice(-e);
+}
+const RTL=/^(ar|he|fa|ur|ckb|ps|syr|ku|sd|ug|yi|dv)$/;
+
+function render(){
+  const region=$("region").value, language=$("language").value, currency=($("currency").value||"").trim().toUpperCase();
+  const forceLatn=$("forceLatn").checked;
+  const {lang,reg,items}=buildChain(language,region);
+  const chain=items.filter(i=>i.ok).map(i=>i.tag);
+
+  /* normalized inputs */
+  $("norm").innerHTML =
+    kv("language in", language||"∅") + kv("normalized lang", lang||"∅") +
+    kv("region in", region||"∅") + kv("normalized region", reg||"∅") +
+    kv("currency", currency||"∅");
+
+  /* try to format */
+  let out="—", used="—", exponent="—", stepLabel="", badgeClass="bad", verdictText="", rtl=false, err="";
+  let exp=null;
+  try{
+    exp = new Intl.NumberFormat("en",{style:"currency",currency}).resolvedOptions().maximumFractionDigits;
+  }catch(e){ err="Invalid currency code “"+currency+"” — validate against ISO 4217 upstream (spec E9)."; }
+
+  if(!err){
+    exponent=exp;
+    $("minorHint").textContent = `This currency has ${exp} decimal place${exp===1?"":"s"} → divisor 10^${exp}.`;
+    const opts={style:"currency",currency}; if(forceLatn) opts.numberingSystem="latn";
+    let decimal="0";
+    try{ decimal=minorToDecimal(BigInt(($("amount").value||"0").replace(/[^\-0-9]/g,"")||"0"),exp); }catch{ decimal="0"; }
+    const nf=new Intl.NumberFormat(chain.length?chain:["en"],opts);
+    out=nf.format(decimal);
+    used=nf.resolvedOptions().locale;
+
+    /* classify which step won */
+    const rLang=(()=>{try{return new Intl.Locale(used).language;}catch{return used;}})();
+    const cdLang=reg?(()=>{try{return new Intl.Locale("und-"+reg).maximize().language;}catch{return"";}})():"";
+    rtl=RTL.test(rLang);
+    if(lang && rLang===new Intl.Locale(lang).language){ stepLabel="Honored the user's language"; badgeClass="ok"; }
+    else if(cdLang && rLang===cdLang){ stepLabel="Fell back to the country's default language"; badgeClass="warn"; }
+    else { stepLabel="Fell back to the English anchor"; badgeClass="warn"; }
+    verdictText = `Amount & currency exact · presentation via <span class="badge ${badgeClass}">${stepLabel}</span>`;
+  } else {
+    verdictText = `<span class="badge bad">Error</span> ${err}`;
+    $("minorHint").textContent="";
+  }
+
+  $("out").textContent=out; $("out").classList.toggle("rtl",rtl);
+  $("verdict").innerHTML=verdictText;
+
+  /* chain visual: mark winning candidate = first well-formed whose resolved locale matches `used` */
+  let winner=-1;
+  if(!err){
+    for(let i=0;i<items.length;i++){ if(!items[i].ok) continue;
+      let rl; try{ rl=new Intl.NumberFormat([items[i].tag],{style:"currency",currency}).resolvedOptions().locale; }catch{ rl=""; }
+      if(rl===used){ winner=i; break; }
+    }
+  }
+  $("chain").innerHTML = items.map((it,i)=>{
+    const cls = !it.ok ? "step drop" : (i===winner ? "step win" : "step");
+    const note = !it.ok ? "malformed → dropped" : (i===winner ? "◀ used" : it.role);
+    return `<div class="${cls}"><div class="n">${i+1}</div><div class="tag">${esc(it.tag)}</div><div class="desc">${esc(note)}</div></div>`;
+  }).join("");
+
+  /* resolved panel */
+  $("resolved").innerHTML = err ? kv("status","error") :
+    kv("locale used", used) + kv("currency", currency) + kv("fraction digits", exponent) +
+    kv("digit system", (()=>{try{return new Intl.NumberFormat(chain,{style:"currency",currency,...(forceLatn?{numberingSystem:"latn"}:{})}).resolvedOptions().numberingSystem;}catch{return"—";}})()) +
+    kv("direction", rtl?"RTL":"LTR");
+
+  /* code echo */
+  $("code").textContent =
+`const chain = ${JSON.stringify(chain)};
+new Intl.NumberFormat(chain, {\n  style: "currency",\n  currency: "${currency}"${forceLatn?',\n  numberingSystem: "latn"':""}\n})\n  .format(${err?'"…"':JSON.stringify(minorToDecimal(safeBig($("amount").value),exp||0))});
+// → ${err?"RangeError (invalid currency)":JSON.stringify(out)}   [locale: ${used}]`;
+}
+function safeBig(v){ try{ return BigInt((v||"0").replace(/[^\-0-9]/g,"")||"0"); }catch{ return 0n; } }
+function kv(k,v){ return `<div class="item"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+$("themeToggle").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;document.documentElement.setAttribute("data-theme",b.dataset.set);[...$("themeToggle").children].forEach(c=>c.classList.toggle("active",c===b));});
+["region","language","currency","amount","forceLatn"].forEach(id=>{$(id).addEventListener("input",render);$(id).addEventListener("change",render);});
+render();
+</script>
+</body>
+</html>
