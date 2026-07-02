@@ -308,7 +308,7 @@ Extra fixtures: `VND` minor `1234568` → `1.234.568 ₫` (0 decimals); `KWD` mi
 
 ---
 
-## Appendix — FAQ
+## Appendix A — FAQ
 
 **Q: Why not just build a big table of country×language → format?**
 Because the platform (`Intl`/ICU) already ships that data for ~350 locales and updates it. Hand-maintaining it would drift and rot. This spec only defines *which locale to request* and *the fallback when the request has no data*.
@@ -324,3 +324,530 @@ Chain falls to the **country default** `ar-EG` → native Arabic-Indic digits an
 
 **Q: Can this ever throw or show a blank?**
 Only if the **currency code itself is invalid** (E9) — validate it upstream. The locale chain always terminates in `en`, so locale resolution never fails.
+
+---
+
+## Appendix B — All locales → number format (defaults highlighted)
+
+Every CLDR locale the formatter can resolve to, with the plain-number sample `1234567.89`. Generated live from `Intl` — regenerate rather than hand-edit.
+
+**Legend:** ★ = this locale is a **language's default** (what fallback step 2 lands on). ◆ = this locale is a **region's default** (what fallback step 3 lands on). Rows carrying either marker are shown in **bold**.
+
+### Africa
+
+| Locale | Language | Sample `1234567.89` | Digits | Default of |
+|---|---|---|---|---|
+| `af` | Afrikaans | 1 234 567,89 | latn |  |
+| `af-NA` | Afrikaans (Namibia) | 1 234 567,89 | latn |  |
+| `am` | Amharic | 1,234,567.89 | latn |  |
+| **`ar-DZ`** | Arabic (Algeria) | **1.234.567,89** | latn | ◆ region `DZ` |
+| **`ar-EG`** | Arabic (Egypt) | **١٬٢٣٤٬٥٦٧٫٨٩** | arab | ★ lang `ar` · ◆ region `EG` |
+| `ar-LY` | Arabic (Libya) | 1.234.567,89 | latn |  |
+| **`ar-MA`** | Arabic (Morocco) | **1.234.567,89** | latn | ◆ region `MA` |
+| `ar-SD` | Arabic (Sudan) | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |  |
+| `ar-SS` | Arabic (South Sudan) | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |  |
+| **`ar-TN`** | Arabic (Tunisia) | **1.234.567,89** | latn | ◆ region `TN` |
+| `ber` |  | 1,234,567.89 | latn |  |
+| `bm` | Bambara | 1,234,567.89 | latn |  |
+| `dyo` | Jola-Fonyi | 1 234 567,89 | latn |  |
+| `ee` | Ewe | 1,234,567.89 | latn |  |
+| `ff` | Fula | 1 234 567,89 | latn |  |
+| `ff-Latn` | Fula (Latin) | 1 234 567,89 | latn |  |
+| `ha` | Hausa | 1,234,567.89 | latn |  |
+| `ha-GH` | Hausa (Ghana) | 1,234,567.89 | latn |  |
+| `ha-NE` | Hausa (Niger) | 1,234,567.89 | latn |  |
+| `ig` | Igbo | 1,234,567.89 | latn |  |
+| `kab` | Kabyle | 1 234 567,89 | latn |  |
+| `khq` | Koyra Chiini | 1 234 567.89 | latn |  |
+| `ki` | Kikuyu | 1,234,567.89 | latn |  |
+| `kln` | Kalenjin | 1,234,567.89 | latn |  |
+| `ksf` | Bafia | 1 234 567,89 | latn |  |
+| `lg` | Ganda | 1,234,567.89 | latn |  |
+| `ln` | Lingala | 1.234.567,89 | latn |  |
+| `lu` | Luba-Katanga | 1.234.567,89 | latn |  |
+| `luo` | Luo | 1,234,567.89 | latn |  |
+| `mg` | Malagasy | 1,234,567.89 | latn |  |
+| `mfe` | Morisyen | 1 234 567.89 | latn |  |
+| `nd` | North Ndebele | 1,234,567.89 | latn |  |
+| `nus` | Nuer | 1,234,567.89 | latn |  |
+| `nyn` | Nyankole | 1,234,567.89 | latn |  |
+| `om` | Oromo | 1,234,567.89 | latn |  |
+| `om-KE` | Oromo (Kenya) | 1,234,567.89 | latn |  |
+| `rn` | Rundi | 1.234.567,89 | latn |  |
+| `rw` | Kinyarwanda | 1.234.567,89 | latn |  |
+| `saq` | Samburu | 1,234,567.89 | latn |  |
+| `sbp` | Sangu | 1,234,567.89 | latn |  |
+| `seh` | Sena | 1.234.567,89 | latn |  |
+| `sg` | Sango | 1.234.567,89 | latn |  |
+| `sn` | Shona | 1,234,567.89 | latn |  |
+| `so` | Somali | 1,234,567.89 | latn |  |
+| `so-DJ` | Somali (Djibouti) | 1,234,567.89 | latn |  |
+| `so-ET` | Somali (Ethiopia) | 1,234,567.89 | latn |  |
+| `so-KE` | Somali (Kenya) | 1,234,567.89 | latn |  |
+| `sw` | Swahili | 1,234,567.89 | latn |  |
+| `sw-CD` | Congo Swahili | 1.234.567,89 | latn |  |
+| **`sw-KE`** | Swahili (Kenya) | **1,234,567.89** | latn | ◆ region `KE` |
+| **`sw-UG`** | Swahili (Uganda) | **1,234,567.89** | latn | ◆ region `UG` |
+| `teo` | Teso | 1,234,567.89 | latn |  |
+| `teo-KE` | Teso (Kenya) | 1,234,567.89 | latn |  |
+| `ti` | Tigrinya | 1,234,567.89 | latn |  |
+| `ti-ER` | Tigrinya (Eritrea) | 1,234,567.89 | latn |  |
+| `twq` | Tasawaq | 1 234 567.89 | latn |  |
+| `vai` | Vai | 1,234,567.89 | latn |  |
+| `vai-Latn` | Vai (Latin) | 1,234,567.89 | latn |  |
+| `wo` | Wolof | 1.234.567,89 | latn |  |
+| `xh` | Xhosa | 1 234 567.89 | latn |  |
+| `yav` | Yangben | 1 234 567,89 | latn |  |
+| `yo` | Yoruba | 1,234,567.89 | latn |  |
+| `yo-BJ` | Yoruba (Benin) | 1,234,567.89 | latn |  |
+| `zgh` | Standard Moroccan Tamazight | 1 234 567,89 | latn |  |
+| `zu` | Zulu | 1,234,567.89 | latn |  |
+
+### Americas
+
+| Locale | Language | Sample `1234567.89` | Digits | Default of |
+|---|---|---|---|---|
+| `arn` | Mapuche | 1,234,567.89 | latn |  |
+| `ay` | Aymara | 1,234,567.89 | latn |  |
+| `chr` | Cherokee | 1,234,567.89 | latn |  |
+| **`en-CA`** | Canadian English | **1,234,567.89** | latn | ◆ region `CA` |
+| **`en-US`** | American English | **1,234,567.89** | latn | ★ lang `en` · ◆ region `US` |
+| `es-419` | Latin American Spanish | 1,234,567.89 | latn |  |
+| **`es-AR`** | Spanish (Argentina) | **1.234.567,89** | latn | ◆ region `AR` |
+| **`es-BO`** | Spanish (Bolivia) | **1.234.567,89** | latn | ◆ region `BO` |
+| `es-BR` | Spanish (Brazil) | 1,234,567.89 | latn |  |
+| `es-BZ` | Spanish (Belize) | 1,234,567.89 | latn |  |
+| **`es-CL`** | Spanish (Chile) | **1.234.567,89** | latn | ◆ region `CL` |
+| **`es-CO`** | Spanish (Colombia) | **1.234.567,89** | latn | ◆ region `CO` |
+| **`es-CR`** | Spanish (Costa Rica) | **1 234 567,89** | latn | ◆ region `CR` |
+| `es-CU` | Spanish (Cuba) | 1,234,567.89 | latn |  |
+| **`es-DO`** | Spanish (Dominican Republic) | **1,234,567.89** | latn | ◆ region `DO` |
+| **`es-EC`** | Spanish (Ecuador) | **1.234.567,89** | latn | ◆ region `EC` |
+| **`es-GT`** | Spanish (Guatemala) | **1,234,567.89** | latn | ◆ region `GT` |
+| `es-HN` | Spanish (Honduras) | 1,234,567.89 | latn |  |
+| **`es-MX`** | Mexican Spanish | **1,234,567.89** | latn | ◆ region `MX` |
+| `es-NI` | Spanish (Nicaragua) | 1,234,567.89 | latn |  |
+| **`es-PA`** | Spanish (Panama) | **1,234,567.89** | latn | ◆ region `PA` |
+| **`es-PE`** | Spanish (Peru) | **1,234,567.89** | latn | ◆ region `PE` |
+| `es-PR` | Spanish (Puerto Rico) | 1,234,567.89 | latn |  |
+| `es-PY` | Spanish (Paraguay) | 1.234.567,89 | latn |  |
+| `es-SV` | Spanish (El Salvador) | 1,234,567.89 | latn |  |
+| `es-US` | Spanish (United States) | 1,234,567.89 | latn |  |
+| **`es-UY`** | Spanish (Uruguay) | **1.234.567,89** | latn | ◆ region `UY` |
+| `es-VE` | Spanish (Venezuela) | 1.234.567,89 | latn |  |
+| `fr-CA` | Canadian French | 1 234 567,89 | latn |  |
+| `gn` | Guarani | 1,234,567.89 | latn |  |
+| `ht` | Haitian Creole | 1,234,567.89 | latn |  |
+| `kgp` | Kaingang | 1.234.567,89 | latn |  |
+| `lkt` | Lakota | 1,234,567.89 | latn |  |
+| `moh` | Mohawk | 1,234,567.89 | latn |  |
+| `nv` | Navajo | 1,234,567.89 | latn |  |
+| **`pt-BR`** | Brazilian Portuguese | **1.234.567,89** | latn | ★ lang `pt` · ◆ region `BR` |
+| `qu` | Quechua | 1,234,567.89 | latn |  |
+| `qu-BO` | Quechua (Bolivia) | 1.234.567,89 | latn |  |
+| `qu-EC` | Quechua (Ecuador) | 1,234,567.89 | latn |  |
+| `yrl` | Nheengatu | 1.234.567,89 | latn |  |
+
+### Asia
+
+| Locale | Language | Sample `1234567.89` | Digits | Default of |
+|---|---|---|---|---|
+| `en-HK` | English (Hong Kong SAR China) | 1,234,567.89 | latn |  |
+| `en-IN` | English (India) | 12,34,567.89 | latn |  |
+| `en-MY` | English (Malaysia) | 1,234,567.89 | latn |  |
+| `en-PH` | English (Philippines) | 1,234,567.89 | latn |  |
+| `en-PK` | English (Pakistan) | 1,234,567.89 | latn |  |
+| **`en-SG`** | English (Singapore) | **1,234,567.89** | latn | ◆ region `SG` |
+| `as` | Assamese | ১২,৩৪,৫৬৭.৮৯ | beng |  |
+| **`bn`** | Bangla | **১২,৩৪,৫৬৭.৮৯** | beng | ★ lang `bn` |
+| `bn-IN` | Bangla (India) | ১২,৩৪,৫৬৭.৮৯ | beng |  |
+| `bo` | Tibetan | 1,234,567.89 | latn |  |
+| `bo-IN` | Tibetan (India) | 1,234,567.89 | latn |  |
+| `brx` | Bodo | 12,34,567.89 | latn |  |
+| `ccp` | Chakma | 𑄷𑄸,𑄹𑄺,𑄻𑄼𑄽.𑄾𑄿 | cakm |  |
+| `dz` | Dzongkha | ༡༢,༣༤,༥༦༧.༨༩ | tibt |  |
+| **`gu`** | Gujarati | **12,34,567.89** | latn | ★ lang `gu` |
+| **`hi`** | Hindi | **12,34,567.89** | latn | ★ lang `hi` |
+| `hi-Latn` | Hindi (Latin) | 12,34,567.89 | latn |  |
+| `hy` | Armenian | 1 234 567,89 | latn |  |
+| **`id`** | Indonesian | **1.234.567,89** | latn | ★ lang `id` |
+| `jv` | Javanese | 1.234.567,89 | latn |  |
+| `ka` | Georgian | 1 234 567,89 | latn |  |
+| `kk` | Kazakh | 1 234 567,89 | latn |  |
+| **`km`** | Khmer | **1,234,567.89** | latn | ★ lang `km` |
+| **`kn`** | Kannada | **1,234,567.89** | latn | ★ lang `kn` |
+| **`ko`** | Korean | **1,234,567.89** | latn | ★ lang `ko` |
+| `ko-KP` | Korean (North Korea) | 1,234,567.89 | latn |  |
+| `ks` | Kashmiri | ۱٬۲۳۴٬۵۶۷٫۸۹ | arabext |  |
+| `ks-Deva` | Kashmiri (Devanagari) | 1,234,567.89 | latn |  |
+| `ku` | Kurdish | 1.234.567,89 | latn |  |
+| `ky` | Kyrgyz | 1 234 567,89 | latn |  |
+| `lo` | Lao | 1.234.567,89 | latn |  |
+| `mai` | Maithili | 1,234,567.89 | latn |  |
+| **`ml`** | Malayalam | **12,34,567.89** | latn | ★ lang `ml` |
+| `mn` | Mongolian | 1,234,567.89 | latn |  |
+| `mni` | Manipuri | ১,২৩৪,৫৬৭.৮৯ | beng |  |
+| **`mr`** | Marathi | **१२,३४,५६७.८९** | deva | ★ lang `mr` |
+| **`ms`** | Malay | **1,234,567.89** | latn | ★ lang `ms` |
+| **`ms-BN`** | Malay (Brunei) | **1.234.567,89** | latn | ◆ region `BN` |
+| `ms-ID` | Malay (Indonesia) | 1.234.567,89 | latn |  |
+| `ms-SG` | Malay (Singapore) | 1,234,567.89 | latn |  |
+| **`my`** | Burmese | **၁,၂၃၄,၅၆၇.၈၉** | mymr | ★ lang `my` |
+| `ne` | Nepali | १२,३४,५६७.८९ | deva |  |
+| `ne-IN` | Nepali (India) | १२,३४,५६७.८९ | deva |  |
+| `or` | Odia | 12,34,567.89 | latn |  |
+| **`pa`** | Punjabi | **12,34,567.89** | latn | ★ lang `pa` |
+| `pa-Arab` | Punjabi (Arabic) | ۱٬۲۳۴٬۵۶۷٫۸۹ | arabext |  |
+| `ps` | Pashto | ۱٬۲۳۴٬۵۶۷٫۸۹ | arabext |  |
+| `ps-PK` | Pashto (Pakistan) | ۱٬۲۳۴٬۵۶۷٫۸۹ | arabext |  |
+| `sa` | Sanskrit | १२,३४,५६७.८९ | deva |  |
+| `sat` | Santali | ᱑,᱒᱓᱔,᱕᱖᱗.᱘᱙ | olck |  |
+| `sd` | Sindhi | ١٬٢٣٤٬٥٦٧.٨٩ | arab |  |
+| `sd-Deva` | Sindhi (Devanagari) | 1,234,567.89 | latn |  |
+| `si` | Sinhala | 1,234,567.89 | latn |  |
+| `su` | Sundanese | 1.234.567,89 | latn |  |
+| **`ta`** | Tamil | **12,34,567.89** | latn | ★ lang `ta` |
+| `ta-LK` | Tamil (Sri Lanka) | 12,34,567.89 | latn |  |
+| `ta-MY` | Tamil (Malaysia) | 1,234,567.89 | latn |  |
+| `ta-SG` | Tamil (Singapore) | 1,234,567.89 | latn |  |
+| **`te`** | Telugu | **12,34,567.89** | latn | ★ lang `te` |
+| `tg` | Tajik | 1 234 567,89 | latn |  |
+| **`th`** | Thai | **1,234,567.89** | latn | ★ lang `th` |
+| `tk` | Turkmen | 1 234 567,89 | latn |  |
+| `tt` | Tatar | 1 234 567,89 | latn |  |
+| `ug` | Uyghur | 1,234,567.89 | latn |  |
+| **`ur`** | Urdu | **1,234,567.89** | latn | ★ lang `ur` |
+| `ur-IN` | Urdu (India) | ۱٬۲۳۴٬۵۶۷٫۸۹ | arabext |  |
+| `uz` | Uzbek | 1 234 567,89 | latn |  |
+| `uz-Arab` | Uzbek (Arabic) | ۱٬۲۳۴٬۵۶۷٫۸۹ | arabext |  |
+| `uz-Cyrl` | Uzbek (Cyrillic) | 1 234 567,89 | latn |  |
+| **`vi`** | Vietnamese | **1.234.567,89** | latn | ★ lang `vi` |
+| `yue` | Cantonese | 1,234,567.89 | latn |  |
+| `yue-Hans` | Cantonese (Simplified) | 1,234,567.89 | latn |  |
+| **`zh`** | Chinese | **1,234,567.89** | latn | ★ lang `zh-Hans` |
+| **`zh-Hans`** | Simplified Chinese | **1,234,567.89** | latn | ★ lang `zh-Hans` |
+| `zh-Hans-HK` | Chinese (Simplified, Hong Kong SAR China) | 1,234,567.89 | latn |  |
+| `zh-Hans-MO` | Chinese (Simplified, Macao SAR China) | 1,234,567.89 | latn |  |
+| `zh-Hans-SG` | Chinese (Simplified, Singapore) | 1,234,567.89 | latn |  |
+| **`zh-Hant`** | Traditional Chinese | **1,234,567.89** | latn | ★ lang `zh-Hant` |
+| **`zh-Hant-HK`** | Chinese (Traditional, Hong Kong SAR China) | **1,234,567.89** | latn | ◆ region `HK` |
+| **`zh-Hant-MO`** | Chinese (Traditional, Macao SAR China) | **1,234,567.89** | latn | ◆ region `MO` |
+| **`ja`** | Japanese | **1,234,567.89** | latn | ★ lang `ja` |
+
+### Europe
+
+| Locale | Language | Sample `1234567.89` | Digits | Default of |
+|---|---|---|---|---|
+| `be` | Belarusian | 1 234 567,89 | latn |  |
+| `be-tarask` | Belarusian (Taraskievica orthography) | 1 234 567,89 | latn |  |
+| **`bg`** | Bulgarian | **1 234 567,89** | latn | ★ lang `bg` |
+| `br` | Breton | 1 234 567,89 | latn |  |
+| `bs` | Bosnian | 1.234.567,89 | latn |  |
+| `bs-Cyrl` | Bosnian (Cyrillic) | 1.234.567,89 | latn |  |
+| `ca` | Catalan | 1.234.567,89 | latn |  |
+| `ca-AD` | Catalan (Andorra) | 1.234.567,89 | latn |  |
+| `ca-FR` | Catalan (France) | 1.234.567,89 | latn |  |
+| `ca-IT` | Catalan (Italy) | 1.234.567,89 | latn |  |
+| **`cs`** | Czech | **1 234 567,89** | latn | ★ lang `cs` |
+| `cv` | Chuvash | 1 234 567,89 | latn |  |
+| `cy` | Welsh | 1,234,567.89 | latn |  |
+| **`da`** | Danish | **1.234.567,89** | latn | ★ lang `da` |
+| `da-GL` | Danish (Greenland) | 1.234.567,89 | latn |  |
+| **`de`** | German | **1.234.567,89** | latn | ★ lang `de` |
+| **`de-AT`** | Austrian German | **1 234 567,89** | latn | ◆ region `AT` |
+| `de-BE` | German (Belgium) | 1.234.567,89 | latn |  |
+| **`de-CH`** | Swiss High German | **1'234'567.89** | latn | ◆ region `CH` |
+| `de-IT` | German (Italy) | 1.234.567,89 | latn |  |
+| `de-LI` | German (Liechtenstein) | 1'234'567.89 | latn |  |
+| `de-LU` | German (Luxembourg) | 1.234.567,89 | latn |  |
+| `dsb` | Lower Sorbian | 1.234.567,89 | latn |  |
+| **`el`** | Greek | **1.234.567,89** | latn | ★ lang `el` |
+| `el-CY` | Greek (Cyprus) | 1.234.567,89 | latn |  |
+| **`en-GB`** | British English | **1,234,567.89** | latn | ◆ region `GB` |
+| **`en-IE`** | English (Ireland) | **1,234,567.89** | latn | ◆ region `IE` |
+| `en-MT` | English (Malta) | 1,234,567.89 | latn |  |
+| **`es-ES`** | European Spanish | **1.234.567,89** | latn | ★ lang `es` · ◆ region `ES` |
+| `et` | Estonian | 1 234 567,89 | latn |  |
+| `eu` | Basque | 1.234.567,89 | latn |  |
+| **`fi`** | Finnish | **1 234 567,89** | latn | ★ lang `fi` |
+| `fo` | Faroese | 1.234.567,89 | latn |  |
+| `fo-DK` | Faroese (Denmark) | 1.234.567,89 | latn |  |
+| **`fr`** | French | **1 234 567,89** | latn | ★ lang `fr` |
+| `fr-BE` | French (Belgium) | 1 234 567,89 | latn |  |
+| `fr-CH` | Swiss French | 1'234'567,89 | latn |  |
+| **`fr-LU`** | French (Luxembourg) | **1.234.567,89** | latn | ◆ region `LU` |
+| `fur` | Friulian | 1.234.567,89 | latn |  |
+| `fy` | Western Frisian | 1.234.567,89 | latn |  |
+| `ga` | Irish | 1,234,567.89 | latn |  |
+| `gd` | Scottish Gaelic | 1,234,567.89 | latn |  |
+| `gl` | Galician | 1.234.567,89 | latn |  |
+| `gsw` | Swiss German | 1'234'567.89 | latn |  |
+| `gv` | Manx | 1,234,567.89 | latn |  |
+| **`hr`** | Croatian | **1.234.567,89** | latn | ★ lang `hr` |
+| `hr-BA` | Croatian (Bosnia & Herzegovina) | 1.234.567,89 | latn |  |
+| `hsb` | Upper Sorbian | 1.234.567,89 | latn |  |
+| **`hu`** | Hungarian | **1 234 567,89** | latn | ★ lang `hu` |
+| `is` | Icelandic | 1.234.567,89 | latn |  |
+| **`it`** | Italian | **1.234.567,89** | latn | ★ lang `it` |
+| `it-CH` | Italian (Switzerland) | 1'234'567.89 | latn |  |
+| `it-SM` | Italian (San Marino) | 1.234.567,89 | latn |  |
+| `it-VA` | Italian (Vatican City) | 1.234.567,89 | latn |  |
+| `kw` | Cornish | 1,234,567.89 | latn |  |
+| `lb` | Luxembourgish | 1.234.567,89 | latn |  |
+| `lt` | Lithuanian | 1 234 567,89 | latn |  |
+| `lv` | Latvian | 1 234 567,89 | latn |  |
+| `mk` | Macedonian | 1.234.567,89 | latn |  |
+| `mt` | Maltese | 1,234,567.89 | latn |  |
+| **`nb`** | Norwegian Bokmål | **1 234 567,89** | latn | ★ lang `nb` |
+| `nds` | Low German | 1.234.567,89 | latn |  |
+| **`nl`** | Dutch | **1.234.567,89** | latn | ★ lang `nl` |
+| **`nl-BE`** | Flemish | **1.234.567,89** | latn | ◆ region `BE` |
+| `nn` | Norwegian Nynorsk | 1 234 567,89 | latn |  |
+| `oc` | Occitan | 1 234 567,89 | latn |  |
+| **`pl`** | Polish | **1 234 567,89** | latn | ★ lang `pl` |
+| **`pt`** | Portuguese | **1.234.567,89** | latn | ★ lang `pt` |
+| **`pt-PT`** | European Portuguese | **1 234 567,89** | latn | ◆ region `PT` |
+| `rm` | Romansh | 1 234 567,89 | latn |  |
+| **`ro`** | Romanian | **1.234.567,89** | latn | ★ lang `ro` |
+| `ro-MD` | Moldavian | 1.234.567,89 | latn |  |
+| **`ru`** | Russian | **1 234 567,89** | latn | ★ lang `ru` |
+| `ru-BY` | Russian (Belarus) | 1 234 567,89 | latn |  |
+| `ru-MD` | Russian (Moldova) | 1 234 567,89 | latn |  |
+| `ru-UA` | Russian (Ukraine) | 1 234 567,89 | latn |  |
+| `sc` | Sardinian | 1.234.567,89 | latn |  |
+| `se` | Northern Sami | 1 234 567,89 | latn |  |
+| `se-FI` | Northern Sami (Finland) | 1 234 567,89 | latn |  |
+| `se-SE` | Northern Sami (Sweden) | 1 234 567,89 | latn |  |
+| **`sk`** | Slovak | **1 234 567,89** | latn | ★ lang `sk` |
+| `sl` | Slovenian | 1.234.567,89 | latn |  |
+| `smn` | Inari Sami | 1 234 567,89 | latn |  |
+| `sq` | Albanian | 1 234 567,89 | latn |  |
+| `sq-MK` | Albanian (North Macedonia) | 1 234 567,89 | latn |  |
+| `sq-XK` | Albanian (Kosovo) | 1 234 567,89 | latn |  |
+| **`sr`** | Serbian | **1.234.567,89** | latn | ★ lang `sr` |
+| `sr-Latn` | Serbian (Latin) | 1.234.567,89 | latn |  |
+| **`sv`** | Swedish | **1 234 567,89** | latn | ★ lang `sv` |
+| `sv-FI` | Swedish (Finland) | 1 234 567,89 | latn |  |
+| `tr-CY` | Turkish (Cyprus) | 1.234.567,89 | latn |  |
+| **`uk`** | Ukrainian | **1 234 567,89** | latn | ★ lang `uk` |
+| `vec` | Venetian | 1 234 567,89 | latn |  |
+| `wae` | Walser | 1'234'567,89 | latn |  |
+
+### Middle East
+
+| Locale | Language | Sample `1234567.89` | Digits | Default of |
+|---|---|---|---|---|
+| **`ar`** | Arabic | **1,234,567.89** | latn | ★ lang `ar` |
+| **`ar-AE`** | Arabic (United Arab Emirates) | **1,234,567.89** | latn | ◆ region `AE` |
+| **`ar-BH`** | Arabic (Bahrain) | **١٬٢٣٤٬٥٦٧٫٨٩** | arab | ◆ region `BH` |
+| `ar-IL` | Arabic (Israel) | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |  |
+| **`ar-IQ`** | Arabic (Iraq) | **١٬٢٣٤٬٥٦٧٫٨٩** | arab | ◆ region `IQ` |
+| **`ar-JO`** | Arabic (Jordan) | **١٬٢٣٤٬٥٦٧٫٨٩** | arab | ◆ region `JO` |
+| **`ar-KW`** | Arabic (Kuwait) | **١٬٢٣٤٬٥٦٧٫٨٩** | arab | ◆ region `KW` |
+| **`ar-LB`** | Arabic (Lebanon) | **١٬٢٣٤٬٥٦٧٫٨٩** | arab | ◆ region `LB` |
+| **`ar-OM`** | Arabic (Oman) | **١٬٢٣٤٬٥٦٧٫٨٩** | arab | ◆ region `OM` |
+| `ar-PS` | Arabic (Palestinian Territories) | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |  |
+| **`ar-QA`** | Arabic (Qatar) | **١٬٢٣٤٬٥٦٧٫٨٩** | arab | ◆ region `QA` |
+| **`ar-SA`** | Arabic (Saudi Arabia) | **١٬٢٣٤٬٥٦٧٫٨٩** | arab | ◆ region `SA` |
+| `ar-SY` | Arabic (Syria) | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |  |
+| `ar-YE` | Arabic (Yemen) | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |  |
+| `ckb` | Central Kurdish | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |  |
+| `ckb-IR` | Central Kurdish (Iran) | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |  |
+| **`fa`** | Persian | **۱٬۲۳۴٬۵۶۷٫۸۹** | arabext | ★ lang `fa` |
+| `fa-AF` | Dari | ۱٬۲۳۴٬۵۶۷٫۸۹ | arabext |  |
+| **`he`** | Hebrew | **1,234,567.89** | latn | ★ lang `he` |
+| `syr` | Syriac | 1,234,567.89 | latn |  |
+| **`tr`** | Turkish | **1.234.567,89** | latn | ★ lang `tr` |
+
+### Oceania
+
+| Locale | Language | Sample `1234567.89` | Digits | Default of |
+|---|---|---|---|---|
+| **`en-AU`** | Australian English | **1,234,567.89** | latn | ◆ region `AU` |
+| **`en-NZ`** | English (New Zealand) | **1,234,567.89** | latn | ◆ region `NZ` |
+| `fj` | Fijian | 1,234,567.89 | latn |  |
+| `haw` | Hawaiian | 1,234,567.89 | latn |  |
+| `mi` | Māori | 1,234,567.89 | latn |  |
+| `to` | Tongan | 1,234,567.89 | latn |  |
+
+### Other / generic
+
+| Locale | Language | Sample `1234567.89` | Digits | Default of |
+|---|---|---|---|---|
+| **`en`** | English | **1,234,567.89** | latn | ★ lang `en` |
+| `en-001` | English (world) | 1,234,567.89 | latn |  |
+| `en-150` | English (Europe) | 1,234,567.89 | latn |  |
+| `eo` | Esperanto | 1 234 567,89 | latn |  |
+| **`fr-FR`** | French (France) | **1 234 567,89** | latn | ★ lang `fr` · ◆ region `FR` |
+| **`de-DE`** | German (Germany) | **1.234.567,89** | latn | ★ lang `de` · ◆ region `DE` |
+| **`es`** | Spanish | **1.234.567,89** | latn | ★ lang `es` |
+| **`it-IT`** | Italian (Italy) | **1.234.567,89** | latn | ★ lang `it` · ◆ region `IT` |
+| **`pt-BR`** | Brazilian Portuguese | **1.234.567,89** | latn | ★ lang `pt` · ◆ region `BR` |
+| **`ru-RU`** | Russian (Russia) | **1 234 567,89** | latn | ★ lang `ru` |
+| **`zh-CN`** | Chinese (China) | **1,234,567.89** | latn | ★ lang `zh-Hans` |
+| **`zh-TW`** | Chinese (Taiwan) | **1,234,567.89** | latn | ★ lang `zh-Hant` · ◆ region `TW` |
+| **`ja-JP`** | Japanese (Japan) | **1,234,567.89** | latn | ★ lang `ja` · ◆ region `JP` |
+| **`ko-KR`** | Korean (South Korea) | **1,234,567.89** | latn | ★ lang `ko` · ◆ region `KR` |
+| `ace` | Acehnese | 1,234,567.89 | latn |  |
+| `ast` | Asturian | 1.234.567,89 | latn |  |
+| `mg-MG` | Malagasy (Madagascar) | 1,234,567.89 | latn |  |
+| `ia` | Interlingua | 1.234.567,89 | latn |  |
+| `jbo` | Lojban | 1,234,567.89 | latn |  |
+| `tlh` | Klingon | 1,234,567.89 | latn |  |
+
+## Appendix C — Language → default locale (fallback step 2)
+
+When only the language is usable, formatting follows the language's default locale, computed at runtime by `new Intl.Locale(lang).maximize()` (CLDR likely-subtags). Do not hardcode this table.
+
+| App language | Name | Default locale | Default region | Sample | Digits |
+|---|---|---|---|---|---|
+| `en` | English | **`en-US`** | United States | 1,234,567.89 | latn |
+| `es` | Spanish | **`es-ES`** | Spain | 1.234.567,89 | latn |
+| `fr` | French | **`fr-FR`** | France | 1 234 567,89 | latn |
+| `de` | German | **`de-DE`** | Germany | 1.234.567,89 | latn |
+| `it` | Italian | **`it-IT`** | Italy | 1.234.567,89 | latn |
+| `nl` | Dutch | **`nl-NL`** | Netherlands | 1.234.567,89 | latn |
+| `sv` | Swedish | **`sv-SE`** | Sweden | 1 234 567,89 | latn |
+| `da` | Danish | **`da-DK`** | Denmark | 1.234.567,89 | latn |
+| `nb` | Norwegian Bokmål | **`nb-NO`** | Norway | 1 234 567,89 | latn |
+| `fi` | Finnish | **`fi-FI`** | Finland | 1 234 567,89 | latn |
+| `tr` | Turkish | **`tr-TR`** | Türkiye | 1.234.567,89 | latn |
+| `id` | Indonesian | **`id-ID`** | Indonesia | 1.234.567,89 | latn |
+| `ms` | Malay | **`ms-MY`** | Malaysia | 1,234,567.89 | latn |
+| `fil` | Filipino | **`fil-PH`** | Philippines | 1,234,567.89 | latn |
+| `pt` | Portuguese | **`pt-BR`** | Brazil | 1.234.567,89 | latn |
+| `ru` | Russian | **`ru-RU`** | Russia | 1 234 567,89 | latn |
+| `uk` | Ukrainian | **`uk-UA`** | Ukraine | 1 234 567,89 | latn |
+| `pl` | Polish | **`pl-PL`** | Poland | 1 234 567,89 | latn |
+| `cs` | Czech | **`cs-CZ`** | Czechia | 1 234 567,89 | latn |
+| `sk` | Slovak | **`sk-SK`** | Slovakia | 1 234 567,89 | latn |
+| `hu` | Hungarian | **`hu-HU`** | Hungary | 1 234 567,89 | latn |
+| `ro` | Romanian | **`ro-RO`** | Romania | 1.234.567,89 | latn |
+| `bg` | Bulgarian | **`bg-BG`** | Bulgaria | 1 234 567,89 | latn |
+| `el` | Greek | **`el-GR`** | Greece | 1.234.567,89 | latn |
+| `hr` | Croatian | **`hr-HR`** | Croatia | 1.234.567,89 | latn |
+| `sr` | Serbian | **`sr-RS`** | Serbia | 1.234.567,89 | latn |
+| `hi` | Hindi | **`hi-IN`** | India | 12,34,567.89 | latn |
+| `bn` | Bangla | **`bn-BD`** | Bangladesh | ১২,৩৪,৫৬৭.৮৯ | beng |
+| `gu` | Gujarati | **`gu-IN`** | India | 12,34,567.89 | latn |
+| `pa` | Punjabi | **`pa-IN`** | India | 12,34,567.89 | latn |
+| `ta` | Tamil | **`ta-IN`** | India | 12,34,567.89 | latn |
+| `te` | Telugu | **`te-IN`** | India | 12,34,567.89 | latn |
+| `kn` | Kannada | **`kn-IN`** | India | 1,234,567.89 | latn |
+| `ml` | Malayalam | **`ml-IN`** | India | 12,34,567.89 | latn |
+| `ur` | Urdu | **`ur-PK`** | Pakistan | 1,234,567.89 | latn |
+| `fa` | Persian | **`fa-IR`** | Iran | ۱٬۲۳۴٬۵۶۷٫۸۹ | arabext |
+| `he` | Hebrew | **`he-IL`** | Israel | 1,234,567.89 | latn |
+| `ar` | Arabic | **`ar-EG`** | Egypt | 1,234,567.89 | latn |
+| `th` | Thai | **`th-TH`** | Thailand | 1,234,567.89 | latn |
+| `vi` | Vietnamese | **`vi-VN`** | Vietnam | 1.234.567,89 | latn |
+| `km` | Khmer | **`km-KH`** | Cambodia | 1,234,567.89 | latn |
+| `my` | Burmese | **`my-MM`** | Myanmar (Burma) | ၁,၂၃၄,၅၆၇.၈၉ | mymr |
+| `ja` | Japanese | **`ja-JP`** | Japan | 1,234,567.89 | latn |
+| `ko` | Korean | **`ko-KR`** | South Korea | 1,234,567.89 | latn |
+| `mr` | Marathi | **`mr-IN`** | India | १२,३४,५६७.८९ | deva |
+| `zh-Hant` | Traditional Chinese | **`zh-Hant-TW`** | Taiwan | 1,234,567.89 | latn |
+| `zh-Hans` | Simplified Chinese | **`zh-Hans-CN`** | China | 1,234,567.89 | latn |
+
+## Appendix D — Region → default locale (fallback step 3)
+
+When the language is unusable, formatting follows the region's default locale, computed at runtime by `new Intl.Locale("und-"+REGION).maximize()`. Do not hardcode this table.
+
+| Region | Country | Default language | Default locale | Sample | Digits |
+|---|---|---|---|---|---|
+| `US` | United States | English (`en`) | **`en-US`** | 1,234,567.89 | latn |
+| `CA` | Canada | English (`en`) | **`en-CA`** | 1,234,567.89 | latn |
+| `MX` | Mexico | Spanish (`es`) | **`es-MX`** | 1,234,567.89 | latn |
+| `BR` | Brazil | Portuguese (`pt`) | **`pt-BR`** | 1.234.567,89 | latn |
+| `AR` | Argentina | Spanish (`es`) | **`es-AR`** | 1.234.567,89 | latn |
+| `CL` | Chile | Spanish (`es`) | **`es-CL`** | 1.234.567,89 | latn |
+| `CO` | Colombia | Spanish (`es`) | **`es-CO`** | 1.234.567,89 | latn |
+| `PE` | Peru | Spanish (`es`) | **`es-PE`** | 1,234,567.89 | latn |
+| `EC` | Ecuador | Spanish (`es`) | **`es-EC`** | 1.234.567,89 | latn |
+| `GT` | Guatemala | Spanish (`es`) | **`es-GT`** | 1,234,567.89 | latn |
+| `DO` | Dominican Republic | Spanish (`es`) | **`es-DO`** | 1,234,567.89 | latn |
+| `CR` | Costa Rica | Spanish (`es`) | **`es-CR`** | 1 234 567,89 | latn |
+| `PA` | Panama | Spanish (`es`) | **`es-PA`** | 1,234,567.89 | latn |
+| `UY` | Uruguay | Spanish (`es`) | **`es-UY`** | 1.234.567,89 | latn |
+| `BO` | Bolivia | Spanish (`es`) | **`es-BO`** | 1.234.567,89 | latn |
+| `PY` | Paraguay | Guarani (`gn`) | **`gn-PY`** | 1,234,567.89 | latn |
+| `GB` | United Kingdom | English (`en`) | **`en-GB`** | 1,234,567.89 | latn |
+| `IE` | Ireland | English (`en`) | **`en-IE`** | 1,234,567.89 | latn |
+| `FR` | France | French (`fr`) | **`fr-FR`** | 1 234 567,89 | latn |
+| `DE` | Germany | German (`de`) | **`de-DE`** | 1.234.567,89 | latn |
+| `ES` | Spain | Spanish (`es`) | **`es-ES`** | 1.234.567,89 | latn |
+| `IT` | Italy | Italian (`it`) | **`it-IT`** | 1.234.567,89 | latn |
+| `PT` | Portugal | Portuguese (`pt`) | **`pt-PT`** | 1 234 567,89 | latn |
+| `NL` | Netherlands | Dutch (`nl`) | **`nl-NL`** | 1.234.567,89 | latn |
+| `BE` | Belgium | Dutch (`nl`) | **`nl-BE`** | 1.234.567,89 | latn |
+| `LU` | Luxembourg | French (`fr`) | **`fr-LU`** | 1.234.567,89 | latn |
+| `CH` | Switzerland | German (`de`) | **`de-CH`** | 1'234'567.89 | latn |
+| `AT` | Austria | German (`de`) | **`de-AT`** | 1 234 567,89 | latn |
+| `SE` | Sweden | Swedish (`sv`) | **`sv-SE`** | 1 234 567,89 | latn |
+| `NO` | Norway | Norwegian Bokmål (`nb`) | **`nb-NO`** | 1 234 567,89 | latn |
+| `DK` | Denmark | Danish (`da`) | **`da-DK`** | 1.234.567,89 | latn |
+| `FI` | Finland | Finnish (`fi`) | **`fi-FI`** | 1 234 567,89 | latn |
+| `IS` | Iceland | Icelandic (`is`) | **`is-IS`** | 1.234.567,89 | latn |
+| `PL` | Poland | Polish (`pl`) | **`pl-PL`** | 1 234 567,89 | latn |
+| `CZ` | Czechia | Czech (`cs`) | **`cs-CZ`** | 1 234 567,89 | latn |
+| `SK` | Slovakia | Slovak (`sk`) | **`sk-SK`** | 1 234 567,89 | latn |
+| `HU` | Hungary | Hungarian (`hu`) | **`hu-HU`** | 1 234 567,89 | latn |
+| `RO` | Romania | Romanian (`ro`) | **`ro-RO`** | 1.234.567,89 | latn |
+| `BG` | Bulgaria | Bulgarian (`bg`) | **`bg-BG`** | 1 234 567,89 | latn |
+| `GR` | Greece | Greek (`el`) | **`el-GR`** | 1.234.567,89 | latn |
+| `HR` | Croatia | Croatian (`hr`) | **`hr-HR`** | 1.234.567,89 | latn |
+| `SI` | Slovenia | Slovenian (`sl`) | **`sl-SI`** | 1.234.567,89 | latn |
+| `RS` | Serbia | Serbian (`sr`) | **`sr-RS`** | 1.234.567,89 | latn |
+| `UA` | Ukraine | Ukrainian (`uk`) | **`uk-UA`** | 1 234 567,89 | latn |
+| `LT` | Lithuania | Lithuanian (`lt`) | **`lt-LT`** | 1 234 567,89 | latn |
+| `LV` | Latvia | Latvian (`lv`) | **`lv-LV`** | 1 234 567,89 | latn |
+| `EE` | Estonia | Estonian (`et`) | **`et-EE`** | 1 234 567,89 | latn |
+| `AE` | United Arab Emirates | Arabic (`ar`) | **`ar-AE`** | 1,234,567.89 | latn |
+| `SA` | Saudi Arabia | Arabic (`ar`) | **`ar-SA`** | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |
+| `QA` | Qatar | Arabic (`ar`) | **`ar-QA`** | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |
+| `KW` | Kuwait | Arabic (`ar`) | **`ar-KW`** | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |
+| `BH` | Bahrain | Arabic (`ar`) | **`ar-BH`** | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |
+| `OM` | Oman | Arabic (`ar`) | **`ar-OM`** | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |
+| `EG` | Egypt | Arabic (`ar`) | **`ar-EG`** | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |
+| `JO` | Jordan | Arabic (`ar`) | **`ar-JO`** | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |
+| `LB` | Lebanon | Arabic (`ar`) | **`ar-LB`** | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |
+| `IQ` | Iraq | Arabic (`ar`) | **`ar-IQ`** | ١٬٢٣٤٬٥٦٧٫٨٩ | arab |
+| `MA` | Morocco | Arabic (`ar`) | **`ar-MA`** | 1.234.567,89 | latn |
+| `DZ` | Algeria | Arabic (`ar`) | **`ar-DZ`** | 1.234.567,89 | latn |
+| `TN` | Tunisia | Arabic (`ar`) | **`ar-TN`** | 1.234.567,89 | latn |
+| `IL` | Israel | Hebrew (`he`) | **`he-IL`** | 1,234,567.89 | latn |
+| `TR` | Türkiye | Turkish (`tr`) | **`tr-TR`** | 1.234.567,89 | latn |
+| `NG` | Nigeria | English (`en`) | **`en-NG`** | 1,234,567.89 | latn |
+| `KE` | Kenya | Swahili (`sw`) | **`sw-KE`** | 1,234,567.89 | latn |
+| `GH` | Ghana | Akan (`ak`) | **`ak-GH`** | 1,234,567.89 | latn |
+| `ZA` | South Africa | English (`en`) | **`en-ZA`** | 1 234 567,89 | latn |
+| `TZ` | Tanzania | Swahili (`sw`) | **`sw-TZ`** | 1,234,567.89 | latn |
+| `UG` | Uganda | Swahili (`sw`) | **`sw-UG`** | 1,234,567.89 | latn |
+| `SN` | Senegal | Wolof (`wo`) | **`wo-SN`** | 1.234.567,89 | latn |
+| `CI` | Côte d’Ivoire | French (`fr`) | **`fr-CI`** | 1 234 567,89 | latn |
+| `ET` | Ethiopia | Amharic (`am`) | **`am-ET`** | 1,234,567.89 | latn |
+| `PK` | Pakistan | Urdu (`ur`) | **`ur-PK`** | 1,234,567.89 | latn |
+| `BD` | Bangladesh | Bangla (`bn`) | **`bn-BD`** | ১২,৩৪,৫৬৭.৮৯ | beng |
+| `LK` | Sri Lanka | Sinhala (`si`) | **`si-LK`** | 1,234,567.89 | latn |
+| `NP` | Nepal | Nepali (`ne`) | **`ne-NP`** | १२,३४,५६७.८९ | deva |
+| `KZ` | Kazakhstan | Russian (`ru`) | **`ru-KZ`** | 1 234 567,89 | latn |
+| `UZ` | Uzbekistan | Uzbek (`uz`) | **`uz-UZ`** | 1 234 567,89 | latn |
+| `SG` | Singapore | English (`en`) | **`en-SG`** | 1,234,567.89 | latn |
+| `MY` | Malaysia | Malay (`ms`) | **`ms-MY`** | 1,234,567.89 | latn |
+| `ID` | Indonesia | Indonesian (`id`) | **`id-ID`** | 1.234.567,89 | latn |
+| `TH` | Thailand | Thai (`th`) | **`th-TH`** | 1,234,567.89 | latn |
+| `VN` | Vietnam | Vietnamese (`vi`) | **`vi-VN`** | 1.234.567,89 | latn |
+| `PH` | Philippines | Filipino (`fil`) | **`fil-PH`** | 1,234,567.89 | latn |
+| `KH` | Cambodia | Khmer (`km`) | **`km-KH`** | 1,234,567.89 | latn |
+| `MM` | Myanmar (Burma) | Burmese (`my`) | **`my-MM`** | ၁,၂၃၄,၅၆၇.၈၉ | mymr |
+| `LA` | Laos | Lao (`lo`) | **`lo-LA`** | 1.234.567,89 | latn |
+| `BN` | Brunei | Malay (`ms`) | **`ms-BN`** | 1.234.567,89 | latn |
+| `JP` | Japan | Japanese (`ja`) | **`ja-JP`** | 1,234,567.89 | latn |
+| `KR` | South Korea | Korean (`ko`) | **`ko-KR`** | 1,234,567.89 | latn |
+| `TW` | Taiwan | Chinese (`zh`) | **`zh-TW`** | 1,234,567.89 | latn |
+| `HK` | Hong Kong SAR China | Chinese (`zh`) | **`zh-HK`** | 1,234,567.89 | latn |
+| `MO` | Macao SAR China | Chinese (`zh`) | **`zh-MO`** | 1,234,567.89 | latn |
+| `AU` | Australia | English (`en`) | **`en-AU`** | 1,234,567.89 | latn |
+| `NZ` | New Zealand | English (`en`) | **`en-NZ`** | 1,234,567.89 | latn |
+| `FJ` | Fiji | English (`en`) | **`en-FJ`** | 1,234,567.89 | latn |
+| `IN` | India | Hindi (`hi`) | **`hi-IN`** | 12,34,567.89 | latn |
